@@ -17,7 +17,6 @@ class CreateArticlesTable extends Migration
             $table->id();
             $table->text('content');
             $table->boolean('is_original')->default(true);
-            $table->json('duplicate_article_ids');
             $table->timestamps();
         });
     }

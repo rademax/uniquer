@@ -10,7 +10,7 @@ class ArticleResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -18,7 +18,7 @@ class ArticleResource extends JsonResource
         return [
             'id' => $this->id,
             'content' => $this->content,
-            'duplicate_article_ids' => $this->duplicate_article_ids,
+            'duplicate_article_ids' => $this->getDuplicateIds(),
         ];
     }
 }

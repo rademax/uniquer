@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\helpers\Shingler;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Article\StoreRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {
+
+    protected $uniquePercent;
+
+    protected $shingleLength;
+
+    public function __construct()
+    {
+        $this->uniquePercent = config('shingler.unique_percent');
+        $this->shingleLength = config('shingler.shingle_length');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +29,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::original()->get();
+        $articles = Article::original()->paginate();
 
         return ArticleResource::collection($articles);
     }
@@ -34,6 +44,26 @@ class ArticleController extends Controller
     {
         $article = new Article($request->validated());
         $article->save();
+
+        $articles = Article::where('id', '!=', $article->id)->get();
+
+        $duplicates = [];
+        foreach ($articles as $originalArticle) {
+            $shingler = new Shingler($this->shingleLength);
+
+            $duplicatePercent = $shingler->compare($originalArticle->content, $article->content);
+            echo $duplicatePercent . '           ';
+            if ($duplicatePercent >= $this->uniquePercent) {
+                $duplicates[] = $originalArticle->id;
+                $originalArticle->duplicates()->attach($article->id);
+            }
+        }
+
+        if (count($duplicates)) {
+            $article->duplicates()->sync($duplicates);
+            $article->is_original = false;
+            $article->save();
+        }
 
         return new ArticleResource($article);
     }

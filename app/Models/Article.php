@@ -11,17 +11,23 @@ class Article extends Model
     protected $fillable = [
         'content',
         'is_original',
-        'duplicate_article_ids',
     ];
 
     public function scopeOriginal($query)
     {
 
-        return $query->where('original', true);
+        return $query->where('is_original', true);
+    }
+
+    public function getDuplicateIds()
+    {
+
+        return $this->duplicates()->pluck('id');
     }
 
     public function duplicates()
     {
 
+        return $this->belongsToMany(Article::class, 'duplicates', 'article_id', 'duplicate_id');
     }
 }
