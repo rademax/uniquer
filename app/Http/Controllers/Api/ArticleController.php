@@ -79,4 +79,22 @@ class ArticleController extends Controller
 
         return new ArticleResource($article);
     }
+
+    public function duplicateGroups()
+    {
+
+        $articles = Article::original()->paginate();
+
+        $duplicateGroups = [];
+
+        foreach ($articles as $article) {
+            $group = $article->getDuplicateIds()->toArray();
+            array_unshift($group, $article->id);
+            $duplicateGroups[] = $group;
+        }
+
+        return response()->json([
+            'duplicate_groups' => $duplicateGroups,
+        ], 200);
+    }
 }

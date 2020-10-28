@@ -15,3 +15,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::apiResource('articles', ArticleController::class)->except(['update', 'destroy']);
+Route::get('duplicate_groups', [ArticleController::class, 'duplicateGroups']);
