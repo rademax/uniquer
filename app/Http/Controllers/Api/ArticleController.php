@@ -51,8 +51,8 @@ class ArticleController extends Controller
         foreach ($articles as $originalArticle) {
             $shingler = new Shingler($this->shingleLength);
 
-            $duplicatePercent = $shingler->compare($originalArticle->content, $article->content);
-            echo $duplicatePercent . '           ';
+            $duplicatePercent = $shingler->compare($article->content, $originalArticle->content);
+
             if ($duplicatePercent >= $this->uniquePercent) {
                 $duplicates[] = $originalArticle->id;
                 $originalArticle->duplicates()->attach($article->id);

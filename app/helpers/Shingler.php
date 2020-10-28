@@ -62,6 +62,14 @@ class Shingler
                 $words = array_remove($word, $words);
         }
 
+        // replace irregular words in verb form
+        foreach ($words as $i => $word) {
+            $irregularWordIndex = array_multi_search(strtolower($word), $this->irregularWords);
+            if ($irregularWordIndex != -1) {
+                $words[$i] = $this->irregularWords[$irregularWordIndex][0];
+            }
+        }
+
         return implode(" ", $words);
     }
 
@@ -109,3 +117,13 @@ function array_remove($val, &$arr)
     return $result;
 }
 
+function array_multi_search($val, $arr)
+{
+    foreach ($arr as $k => $v) {
+        if (in_array($val, $v)) {
+            return $k;
+        }
+    }
+
+    return -1;
+}
