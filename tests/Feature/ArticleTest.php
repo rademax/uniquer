@@ -13,12 +13,14 @@ class ArticleTest extends TestCase
 
     protected $createArticleUrl;
     protected $getArticleListUrl;
+    protected $getDuplicateGroupListUrl;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->getArticleListUrl = '/articles';
+        $this->getDuplicateGroupListUrl = '/duplicate_groups';
         $this->createArticleUrl = '/articles';
     }
 
@@ -128,6 +130,42 @@ class ArticleTest extends TestCase
             'data' => [
                 ['id' => $article1->id, 'content' => $article1->content],
                 ['id' => $article2->id, 'content' => $article2->content],
+            ],
+        ]);
+    }
+
+    public function test_duplicate_group_list()
+    {
+
+        $data1 = ['content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'];
+        $data2 = ['content' => 'Some other text here to check for duplication'];
+
+        $response1 = $this->postJson($this->getArticleListUrl, $data1);
+        $article1 = $response1->getOriginalContent();
+
+        $response2 = $this->postJson($this->getArticleListUrl, $data1);
+        $article2 = $response2->getOriginalContent();
+
+        $response3 = $this->postJson($this->getArticleListUrl, $data1);
+        $article3 = $response3->getOriginalContent();
+
+        $response4 = $this->postJson($this->getArticleListUrl, $data2);
+        $article4 = $response4->getOriginalContent();
+
+        $response5 = $this->postJson($this->getArticleListUrl, $data2);
+        $article5 = $response5->getOriginalContent();
+
+        $response6 = $this->postJson($this->getArticleListUrl, $data2);
+        $article6 = $response6->getOriginalContent();
+
+        $response = $this->get($this->getDuplicateGroupListUrl);
+
+        $response->assertStatus(200);
+
+        $response->assertJson([
+            'duplicate_groups' => [
+                [$article1->id, $article2->id, $article3->id],
+                [$article4->id, $article5->id, $article6->id],
             ],
         ]);
     }
