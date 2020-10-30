@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\helpers\Shingler;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Article\StoreRequest;
+use App\Http\Requests\Api\Base\IndexRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -25,11 +26,12 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param IndexRequest $request
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(IndexRequest $request)
     {
-        $articles = Article::original()->paginate();
+        $articles = Article::original()->paginate($request->getPerPage());
 
         return ArticleResource::collection($articles);
     }
