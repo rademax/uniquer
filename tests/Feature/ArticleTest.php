@@ -3,12 +3,12 @@
 namespace Tests\Feature;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ArticleTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
     use HasFactory;
 
     protected $createArticleUrl;
