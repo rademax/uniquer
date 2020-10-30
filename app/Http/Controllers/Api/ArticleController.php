@@ -8,6 +8,7 @@ use App\Http\Requests\Api\Article\StoreRequest;
 use App\Http\Requests\Api\Base\IndexRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ArticleController extends Controller
@@ -82,10 +83,16 @@ class ArticleController extends Controller
         return new ArticleResource($article);
     }
 
-    public function duplicateGroups()
+    /**
+     * Get duplicate group list
+     *
+     * @param IndexRequest $request
+     * @return JsonResponse
+     */
+    public function duplicateGroups(IndexRequest $request)
     {
 
-        $articles = Article::original()->paginate();
+        $articles = Article::original()->paginate($request->getPerPage());
 
         $duplicateGroups = [];
 
