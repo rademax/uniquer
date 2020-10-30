@@ -1,61 +1,190 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Getting started
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Installation
 
-## About Laravel
+To deploy the project you need to perform next commands in project directory:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Install project dependencies (for avoid the installing Composer globally.)
+```
+docker run --rm -v $(pwd):/app composer install
+```
+- Create .env file
+```
+cp .env.example .env
+```
+- Start containers
+```
+docker-compose up -d
+```
+- Perform migrations to database
+```
+docker-compose exec app php artisan migrate
+```
+Finally, you can access the application on http://localhost:80
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Testing
+To perform tests, run command:
+```
+docker-compose exec app ./vendor/bin/phpunit
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## API Documentation
 
-## Learning Laravel
+**Get unique article list**
+----
+  Returns json unique article list data.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+* **URL**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+  /articles
 
-## Laravel Sponsors
+* **Method:**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+  `GET`
+  
+*  **URL Params**
 
-### Premium Partners
+   `page=[integer]`
+   `per_page=[integer]`
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+* **Success Response:**
 
-## Contributing
+  * **Code:** 200 <br />
+    **Content:** 
+```
+    {
+        data: [
+            { 
+                id : 12, 
+                content : "...", 
+                duplicate_article_ids: [1, 3] 
+            }
+        ]
+    }
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Get article**
+----
+  Returns article json data.
 
-## Code of Conduct
+* **URL**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+  /articles/:id
 
-## Security Vulnerabilities
+* **Method:**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+  `GET`
+  
+*  **URL Params**
 
-## License
+   **Required:**
+ 
+   `id=[integer]`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+```
+    {
+        id : 12, 
+        content : "...", 
+        duplicate_article_ids: [1, 3] 
+    }
+```
+    
+* **Error Response:**
+
+  * **Code:** 404 NOT FOUND <br />
+    **Content:** `{ error : "Article doesn't exist" }`
+    
+**Create an article**
+----
+  Returns article json data.
+
+* **URL**
+
+  /articles
+
+* **Method:**
+
+  `POST`
+  
+*  **URL Params**
+
+   **Required:**
+ 
+   `content=[string]`
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+```
+    {
+        id : 12, 
+        content : "...", 
+        duplicate_article_ids: [1, 3] 
+    }
+```
+    
+* **Error Response:**
+
+  * **Code:** 422 <br />
+    **Content:** `{ error : "The attribute Content is required field" }`
+
+**Get duplicate group list**
+----
+  Returns json duplicate group list data.
+
+* **URL**
+
+  /duplicate_groups
+
+* **Method:**
+
+  `GET`
+  
+*  **URL Params**
+
+   `page=[integer]`
+   `per_page=[integer]`
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+```
+    {
+        duplicate_groups: [
+            [1, 12, 15],
+            [5, 7, 10],
+        ]
+    }
+```
+
+## Methodology
+
+The shingle algorithm was used.
+
+As far as it is concerned, it is used by search engines to find duplicates
+
+The stages that the text undergoing comparison goes through:
+- canonization of the text;
+- splitting into shingles;
+- calculation of shingle hashes;
+- a random sample of 84 checksum values;
+- comparison, determination of the result.
+
+The principle of the shingle algorithm is to compare a random sample of shingle checksums (subsequences) of two texts with each other.
+
+It was implemented:
+- removal of special characters,
+- search and delete words (for example, articles a, the)
+- normalization of words (irregular verbs)
+
+## Next steps
+
+In the future, it is planned to normalize words that include the endings 'ed', 'ing' and the like.
+
+Also, given that the service will expand, it will be necessary to optimize and save a set of shingles in the database for each article.
