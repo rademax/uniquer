@@ -4,6 +4,11 @@
 
 To deploy the project you need to perform next commands in project directory:
 
+- Give write permission for the storage folder and the cache folder within the bootstrap folder.
+```
+sudo chmod 777 -R storage/
+sudo chmod 777 -R bootstrap/cache/
+```
 - Install project dependencies (for avoid the installing Composer globally.)
 ```
 docker run --rm -v $(pwd):/app composer install
